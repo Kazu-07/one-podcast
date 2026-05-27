@@ -1,0 +1,26 @@
+name: Mirror to Kazu-07/one-podcast
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up SSH deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MIRROR_DEPLOY_KEY }}
+
+      - name: Push to Kazu-07/one-podcast
+        run: |
+          git remote add mirror git@github.com:Kazu-07/one-podcast.git
+          git push --force mirror main:main
+          git push --force mirror --tags
